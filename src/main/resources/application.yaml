@@ -1,0 +1,24 @@
+spring.application.name: circuitbreaker
+
+management.endpoints.web.exposure.include: '*'
+management.endpoint.health.show-details: always
+management.health.circuitbreakers.enabled: true
+
+resilience4j.circuitbreaker:
+  configs:
+    default:
+      registerHealthIndicator: true
+      slidingWindowType: COUNT_BASED
+      slidingWindowSize: 10
+      minimumNumberOfCalls: 5
+      failureRateThreshold: 60
+      waitDurationInOpenState: 10000
+      permittedNumberOfCallsInHalfOpenState: 5
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      recordExceptions:
+        - java.util.concurrent.TimeoutException
+      ignoreExceptions:
+        - com.example.circuitbreaker.exception.BusinessException
+  instances:
+    demoService:
+      baseConfig: default
